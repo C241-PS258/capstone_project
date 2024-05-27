@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  backend_capstone:
+      container_name: capstone_backend_dev
+      build:
+        context: .
+        dockerfile: ./Dockerfile
+      ports:
+        - ${PORT_BE}:${PORT_DEFAULT_3000}
+      environment:
+        MODE: ${MODE}
+      volumes:
+        - .:/usr/src/app
+        - /usr/src/app/node_modules
+      depends_on:
+        - postgres_capstone
+      restart: unless-stopped
+
+  postgres_capstone:
+    container_name: capstone_db
+    image: postgres:14
+    ports:
+      - ${PORT_DB}:${PORT_DEFAULT_5432}
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER_DEV}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_DEV}
+      POSTGRES_DB: ${POSTGRES_DB_DEV}
+    volumes:
+      - 'data-postgres-development:/var/lib/postgresql/data'
+
+volumes:
+  data-postgres-development:
+    name: data-postgres-development
+  data-postgres-development-migrate:
+    name: data-postgres-development-migrate
+
+networks:
+  default:
+    name: bangkit-network-dev
+    external: true

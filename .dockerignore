@@ -1,0 +1,7 @@
+**/public-production
+**/public-staging
+**/data-postgre-production
+**/data-postgre-staging
+node_modules/
+.wwebjs_auth
+.wwebjs_cache
