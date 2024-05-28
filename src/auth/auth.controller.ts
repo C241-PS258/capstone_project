@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { LocalGuard } from './guards/local.guard';
 import { Request } from 'express';
 import { JwtAuthGuard } from './guards/jwt.guard';
+import { RegisterPayloadDto } from './dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -15,6 +16,14 @@ export class AuthController {
         const user = this.authService.login(authPayload)
         return user;
     }
+
+    @Post('register')
+    register(@Body() authPayload: RegisterPayloadDto) {
+        const user = this.authService.register(authPayload)
+        return user;
+    }
+
+
 
     @Get('status')
     @UseGuards(JwtAuthGuard)
