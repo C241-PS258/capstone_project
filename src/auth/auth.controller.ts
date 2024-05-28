@@ -12,15 +12,13 @@ export class AuthController {
     @Post('login')
     @UseGuards(LocalGuard)
     login(@Body() authPayload: AuthPayloadDto) {
-        const user = this.authService.validateUsers(authPayload)
+        const user = this.authService.login(authPayload)
         return user;
     }
 
     @Get('status')
     @UseGuards(JwtAuthGuard)
     status(@Req() req: Request) {
-        console.log('status');
-        console.log(req.user);
         return req.user
     }
 }
