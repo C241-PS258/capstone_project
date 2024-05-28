@@ -1,21 +1,21 @@
 version: '3.8'
 
 services:
-  backend_capstone:
-      container_name: capstone_backend_dev
-      build:
-        context: .
-        dockerfile: ./Dockerfile
-      ports:
-        - ${PORT_BE}:${PORT_DEFAULT_3000}
-      environment:
-        MODE: ${MODE}
-      volumes:
-        - .:/usr/src/app
-        - /usr/src/app/node_modules
-      depends_on:
-        - postgres_capstone
-      restart: unless-stopped
+  # backend_capstone:
+  #     container_name: capstone_backend_dev
+  #     build:
+  #       context: .
+  #       dockerfile: ./Dockerfile
+  #     ports:
+  #       - ${PORT_BE}:${PORT_DEFAULT_3000}
+  #     environment:
+  #       MODE: ${MODE}
+  #     volumes:
+  #       - .:/usr/src/app
+  #       - /usr/src/app/node_modules
+  #     depends_on:
+  #       - postgres_capstone
+  #     restart: unless-stopped
 
   postgres_capstone:
     container_name: capstone_db
