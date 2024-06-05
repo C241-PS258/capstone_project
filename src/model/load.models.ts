@@ -31,7 +31,6 @@ async function predictClassification(model, image) {
         const prediction = await model.predict(tensor);
         const scores = await prediction.data();
 
-        // Interpretasi hasil prediksi
         const maxScoreIndex = scores.indexOf(Math.max(...scores));
         console.log("maxScoreIndex", maxScoreIndex);
         
@@ -53,6 +52,10 @@ async function predictClassification(model, image) {
             case 3:
                 label = "Ikan Nila";
                 suggestion = "Selamat, Anda memprediksi ikan nila!";
+                break;
+            case 4:
+                label = "Ikan Patin";
+                suggestion = "Selamat, Anda memprediksi ikan Patin!";
                 break;
             default:
                 label = "Tidak Diketahui";
