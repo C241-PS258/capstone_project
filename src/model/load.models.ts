@@ -6,11 +6,10 @@ import * as tfjs from '@tensorflow/tfjs-node';
 
 async function loadModel() {
     const modelUrl = "https://storage.googleapis.com/aquaculture_mate-bucket/model-machine_learning/tfjs-model/model.json";
-    // const modelUrl = "https://storage.googleapis.com/aquaculture_mate-bucket/model-machine_learning/tfjs-model/model.json";
     // const modelUrl = "file://data_model/model.json";
     // const modelUrl = "https://storage.googleapis.com/aquaculture_mate-bucket/model-machine_learning/model.json";
     console.log('ini model');
-    return tfjs.loadGraphModel(modelUrl);
+    return tfjs.loadLayersModel(modelUrl);
 }
 
 
@@ -31,32 +30,29 @@ async function predictClassification(model, image) {
         const prediction = await model.predict(tensor);
         const scores = await prediction.data();
 
-        // Interpretasi hasil prediksi
         const maxScoreIndex = scores.indexOf(Math.max(...scores));
         console.log("maxScoreIndex", maxScoreIndex);
-        
+
         let label, suggestion;
 
-        switch (maxScoreIndex) {
-            case 0:
-                label = "Ikan Lele";
-                suggestion = "Selamat, Anda memprediksi ikan lele!";
-                break;
-            case 1:
-                label = "Ikan Gabus";
-                suggestion = "Selamat, Anda memprediksi ikan gabus!";
-                break;
-            case 2:
-                label = "Ikan Mas";
-                suggestion = "Selamat, Anda memprediksi ikan mas!";
-                break;
-            case 3:
-                label = "Ikan Nila";
-                suggestion = "Selamat, Anda memprediksi ikan nila!";
-                break;
-            default:
-                label = "Tidak Diketahui";
-                suggestion = "Hasil prediksi tidak dapat diinterpretasikan.";
+        if (maxScoreIndex === 0) {
+            label = "Ikan Gabus";
+            suggestion = "Selamat, Anda memprediksi ikan Gabus!";
+        } else if (maxScoreIndex === 1) {
+            label = "Ikan Mas";
+            suggestion = "Selamat, Anda memprediksi ikan Mas!";
+        } else if (maxScoreIndex === 2) {
+            label = "Ikan Lele";
+            suggestion = "Selamat, Anda memprediksi ikan Lele!";
+        } else if (maxScoreIndex === 3) {
+            label = "Ikan Nila";
+            suggestion = "Selamat, Anda memprediksi ikan nila!";
+        } else if (maxScoreIndex === 4) {
+            label = "Ikan Patin";
+            suggestion = "Selamat, Anda memprediksi ikan Patin!";
+        } else {
+            label = "Tidak Diketahui";
+            suggestion = "Hasil prediksi tidak dapat diinterpretasikan.";
         }
 
         return { label, suggestion };
@@ -64,6 +60,7 @@ async function predictClassification(model, image) {
         throw new BadRequestException(`Terjadi kesalahan input: ${error.message}`);
     }
 }
+
 
 // async function predictClassification(model, image) {
 //     try {
@@ -88,7 +85,7 @@ async function predictClassification(model, image) {
 //         // Get the corresponding label
 //         const label = labels[maxScoreIndex];
 //         console.log("labels", label);
-        
+
 
 //         // Provide a suggestion based on the label
 //         let suggestion;
