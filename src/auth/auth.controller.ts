@@ -11,7 +11,7 @@ export class AuthController {
     constructor(private authService: AuthService) { }
 
     @Post('login')
-    @UseGuards(LocalGuard)
+    // @UseGuards(LocalGuard)
     login(@Body() authPayload: AuthPayloadDto) {
         const user = this.authService.login(authPayload)
         return user;

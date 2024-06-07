@@ -6,18 +6,8 @@ import { FishQuery } from 'prisma/queries/fish/fish.query';
 export class PredictService {
     constructor(private readonly fishQuery: FishQuery) { }
 
-
-    async loadModel() {
-        const modelUrl = "https://storage.googleapis.com/aquaculture_mate-bucket/model-machine_learning/tfjs-model/model.json";
-        // const modelUrl = "file://data_model/model.json";
-        // const modelUrl = "https://storage.googleapis.com/aquaculture_mate-bucket/model-machine_learning/model.json";
-        console.log('ini model');
-        return tfjs.loadLayersModel(modelUrl);
-    }
-
     async predictClassification(model, image) {
         try {
-            // Decode the image and normalize it by dividing by 255
             const tensor = tfjs.node.decodeJpeg(image.data)
                 .resizeNearestNeighbor([224, 224])
                 .expandDims()
@@ -28,23 +18,20 @@ export class PredictService {
             const scores = await prediction.data();
 
             const maxScoreIndex = scores.indexOf(Math.max(...scores));
-            console.log("maxScoreIndex", maxScoreIndex);
 
-            let label, suggestion;
+            let jenis_ikan, pakan, pemeliharaan;
             const ikanLabels = ["Gabus", "Mas", "Lele", "Nila", "Patin"];
 
             if (maxScoreIndex >= 0 && maxScoreIndex < ikanLabels.length) {
-                label = ikanLabels[maxScoreIndex];
-                const ikanInfo = await this.fishQuery.getFishByName(label);
-                suggestion = `Selamat, Anda memprediksi ikan ${label}! Pakan: ${ikanInfo.pakan}, Pemeliharaan: ${ikanInfo.pemeliharaan}`;
+                jenis_ikan = ikanLabels[maxScoreIndex];
+                const ikanInfo = await this.fishQuery.getFishByName(jenis_ikan);
+                pakan = ikanInfo.pakan;
+                pemeliharaan = ikanInfo.pemeliharaan;
             } else {
-                label = "Tidak Diketahui";
-                suggestion = "Hasil prediksi tidak dapat diinterpretasikan.";
+                ({ jenis_ikan, pakan, pemeliharaan } = { jenis_ikan: "Tidak Diketahui", pakan: "Tidak Diketahui", pemeliharaan: "Tidak Diketahui" });
             }
 
-            console.log(suggestion, label);
-
-            return { label, suggestion };
+            return { jenis_ikan, pakan, pemeliharaan };
         } catch (error) {
             throw new BadRequestException(`Terjadi kesalahan input: ${error.message}`);
         }

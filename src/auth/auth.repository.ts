@@ -12,10 +12,10 @@ export class AuthRepository {
         private jwtService: JwtService,
     ) { }
 
-    async findUserByUsernameOrThrow(usernameOrEmail: string) {
-        const user = await this.userQuery.findByUsername(usernameOrEmail);
+    async findUserByEmailOrThrow(Email: string) {
+        const user = await this.userQuery.findByEmail(Email);
         if (!user) {
-            throw new BadRequestException('User belum terdaftar');
+            throw new BadRequestException('Email belum terdaftar');
         }
         return user;
     }
@@ -28,8 +28,9 @@ export class AuthRepository {
       */
 
     async login(dto: AuthPayloadDto) {
-        dto.username = dto.username.toLowerCase().trim();
-        const user = await this.findUserByUsernameOrThrow(dto.username);
+        dto.email = dto.email.toLowerCase().trim();
+        const user = await this.findUserByEmailOrThrow(dto.email);
+        
         const validPassword = await bcrypt.compare(dto.password, user.password);
 
         if (!validPassword) {
@@ -39,12 +40,11 @@ export class AuthRepository {
     }
 
     async register(dto: RegisterPayloadDto) {
-        dto.username = dto.username.toLowerCase().trim();
+        dto.email = dto.email.toLowerCase().trim();
         const salt = await bcrypt.genSalt();
         const hash = await bcrypt.hash(dto.password, salt);
         try {
             dto.password = hash;
-            await this.checkUserExist(dto.username);
             await this.checkEmailExist(dto.email);
 
             const createUser = await this.userQuery.create(dto)
@@ -61,13 +61,6 @@ export class AuthRepository {
      | Helper auth function
      |--------------------------------------------------------------------------
      */
-
-    async checkUserExist(username: string) {
-        const user = await this.userQuery.findByUsername(username);
-        if (user) {
-            throw new BadRequestException('User sudah terdaftar');
-        }
-    }
 
     async checkEmailExist(email: string) {
         const user = await this.userQuery.findByEmail(email);

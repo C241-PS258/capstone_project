@@ -1,7 +1,8 @@
-import { BadRequestException, Controller, Post, Req } from '@nestjs/common';
+import { BadRequestException, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { PredictService } from './predict.service';
 import { loadModel } from 'src/model/load.models';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 interface FileUploadRequest extends Request {
     files: {
@@ -10,6 +11,7 @@ interface FileUploadRequest extends Request {
 }
 
 @Controller('predict')
+@UseGuards(JwtAuthGuard)
 export class PredictController {
     constructor(private predictService: PredictService) { }
     @Post('fish')
@@ -24,9 +26,8 @@ export class PredictController {
 
         try {
             const payload = image;
-            // console.log('Payload:', payload);
             const label = this.predictService.predictClassification(model, payload);
-            return { prediction: (await label).suggestion, label: (await label).label };
+            return { jenis_ikan: (await label).jenis_ikan, pakan: (await label).pakan, pemeliharaan: (await label).pemeliharaan};
         } catch (error) {
             throw new BadRequestException(`Error in processing the image: ${error.message}`);
         }
