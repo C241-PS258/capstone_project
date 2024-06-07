@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as fileUpload from 'express-fileupload';
-import { loadModel } from './model/load.models';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

@@ -13,55 +13,6 @@ async function loadModel() {
 }
 
 
-function predict(model, imageBuffer) {
-    const tensor = tfjs.node
-        .decodeJpeg(imageBuffer)
-        .resizeNearestNeighbor([150, 150])
-        .expandDims()
-        .toFloat();
-
-    return model.predict(tensor).data();
-}
-
-async function predictClassification(model, image) {
-    try {
-        const tensor = tfjs.node.decodeJpeg(image.data).resizeNearestNeighbor([224, 224]).expandDims().toFloat();
-
-        const prediction = await model.predict(tensor);
-        const scores = await prediction.data();
-
-        const maxScoreIndex = scores.indexOf(Math.max(...scores));
-        console.log("maxScoreIndex", maxScoreIndex);
-
-        let label, suggestion;
-
-        if (maxScoreIndex === 0) {
-            label = "Ikan Gabus";
-            suggestion = "Selamat, Anda memprediksi ikan Gabus!";
-        } else if (maxScoreIndex === 1) {
-            label = "Ikan Mas";
-            suggestion = "Selamat, Anda memprediksi ikan Mas!";
-        } else if (maxScoreIndex === 2) {
-            label = "Ikan Lele";
-            suggestion = "Selamat, Anda memprediksi ikan Lele!";
-        } else if (maxScoreIndex === 3) {
-            label = "Ikan Nila";
-            suggestion = "Selamat, Anda memprediksi ikan nila!";
-        } else if (maxScoreIndex === 4) {
-            label = "Ikan Patin";
-            suggestion = "Selamat, Anda memprediksi ikan Patin!";
-        } else {
-            label = "Tidak Diketahui";
-            suggestion = "Hasil prediksi tidak dapat diinterpretasikan.";
-        }
-
-        return { label, suggestion };
-    } catch (error) {
-        throw new BadRequestException(`Terjadi kesalahan input: ${error.message}`);
-    }
-}
-
-
 // async function predictClassification(model, image) {
 //     try {
 //         // Decode JPEG image, resize, and expand dimensions
@@ -151,4 +102,4 @@ async function predictClassification(model, image) {
 
 
 
-export { loadModel, predict, predictClassification }
+export { loadModel}
