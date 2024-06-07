@@ -11,7 +11,6 @@ interface FileUploadRequest extends Request {
 }
 
 @Controller('predict')
-@UseGuards(JwtAuthGuard)
 export class PredictController {
     constructor(private predictService: PredictService) { }
     @Post('fish')
