@@ -26,3 +26,10 @@ model User {
   email    String?    @unique
   password String
 }
+
+model Fish {
+    id           Int      @id @default(autoincrement())
+    nama         String   @unique
+    pakan        String
+    pemeliharaan String
+}

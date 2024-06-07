@@ -1,6 +1,7 @@
 import { BadRequestException, Controller, Post, Req } from '@nestjs/common';
 import { Request } from 'express';
-import { loadModel, predict, predictClassification } from 'src/model/load.models';
+import { PredictService } from './predict.service';
+import { loadModel } from 'src/model/load.models';
 
 interface FileUploadRequest extends Request {
     files: {
@@ -10,20 +11,8 @@ interface FileUploadRequest extends Request {
 
 @Controller('predict')
 export class PredictController {
+    constructor(private predictService: PredictService) { }
     @Post('fish')
-    // async handleUpload(@Req() req: FileUploadRequest) {
-    //     const image = req.files?.image;
-    //     const model = await loadModel();
-
-    //     if (image) {
-    //         const payload = image.data
-    //         console.log(payload);
-
-    //         const label = await predictClassification(model, image);
-    //     } else {
-    //         return { error: 'No file uploaded or file field name is incorrect' };
-    //     }
-    // }
     async handleUpload(@Req() req: FileUploadRequest) {
         const image = req.files?.image;
 
@@ -36,8 +25,8 @@ export class PredictController {
         try {
             const payload = image;
             // console.log('Payload:', payload);
-            const label = await predictClassification(model, payload);
-            return { prediction: label };
+            const label = this.predictService.predictClassification(model, payload);
+            return { prediction: (await label).suggestion, label: (await label).label };
         } catch (error) {
             throw new BadRequestException(`Error in processing the image: ${error.message}`);
         }
