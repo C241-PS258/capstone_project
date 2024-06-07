@@ -17,10 +17,12 @@ export class PredictService {
 
     async predictClassification(model, image) {
         try {
+            // Decode the image and normalize it by dividing by 255
             const tensor = tfjs.node.decodeJpeg(image.data)
                 .resizeNearestNeighbor([224, 224])
                 .expandDims()
-                .toFloat();
+                .toFloat()
+                .div(tfjs.scalar(255));
 
             const prediction = model.predict(tensor);
             const scores = await prediction.data();
@@ -34,7 +36,7 @@ export class PredictService {
             if (maxScoreIndex >= 0 && maxScoreIndex < ikanLabels.length) {
                 label = ikanLabels[maxScoreIndex];
                 const ikanInfo = await this.fishQuery.getFishByName(label);
-                suggestion = `Selamat, Anda memprediksi ikan ${label}! Pakan: ${ikanInfo.pakan}, Pemeliharaan: ${ikanInfo.pemeliharaan}`;                
+                suggestion = `Selamat, Anda memprediksi ikan ${label}! Pakan: ${ikanInfo.pakan}, Pemeliharaan: ${ikanInfo.pemeliharaan}`;
             } else {
                 label = "Tidak Diketahui";
                 suggestion = "Hasil prediksi tidak dapat diinterpretasikan.";
