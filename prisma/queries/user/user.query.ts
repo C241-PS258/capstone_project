@@ -13,16 +13,6 @@ export class UserQuery extends DbService {
         });
     }
 
-    async findByUsername(username: string) {
-        return await this.prisma.user.findFirst({
-            where: {
-                OR: [
-                    { username: username },
-                ],
-            },
-        });
-    }
-
     async findByEmail(email: string) {
         return await this.prisma.user.findFirst({
             where: {
