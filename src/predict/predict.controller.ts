@@ -24,6 +24,9 @@ export class PredictController {
         const model = await loadModel();
 
         try {
+            const imageUrl = await this.predictService.uploadFile(image);
+            console.log("image url: ", imageUrl);
+
             const payload = image;
             const label = this.predictService.predictClassification(model, payload);
             return { jenis_ikan: (await label).jenis_ikan, pakan: (await label).pakan, pemeliharaan: (await label).pemeliharaan};
