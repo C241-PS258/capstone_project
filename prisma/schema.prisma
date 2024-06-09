@@ -33,3 +33,9 @@ model Fish {
     pakan        String
     pemeliharaan String
 }
+
+model Histories {
+  id           Int      @id @default(autoincrement())
+  image        String
+  timestamp    DateTime
+}

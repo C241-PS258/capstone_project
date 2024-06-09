@@ -53,15 +53,15 @@ export class PredictService {
 
             const prediction = model.predict(tensor);
             const scores = await prediction.data();
-
             const maxScoreIndex = scores.indexOf(Math.max(...scores));
-
             let jenis_ikan, pakan, pemeliharaan;
             const ikanLabels = ["Gabus", "Mas", "Lele", "Nila", "Patin"];
+            const imageUrl = await this.uploadFile(image);
+            console.log("image url: ", imageUrl);
 
             if (maxScoreIndex >= 0 && maxScoreIndex < ikanLabels.length) {
                 jenis_ikan = ikanLabels[maxScoreIndex];
-                const ikanInfo = await this.fishQuery.getFishByName(jenis_ikan);
+                const ikanInfo = await this.fishQuery.getFishByName(jenis_ikan, imageUrl);
                 pakan = ikanInfo.pakan;
                 pemeliharaan = ikanInfo.pemeliharaan;
             } else {
