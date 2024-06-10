@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Controller, Headers, Post, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { PredictService } from './predict.service';
 import { loadModel } from 'src/model/load.models';
@@ -15,7 +15,7 @@ interface FileUploadRequest extends Request {
 export class PredictController {
     constructor(private predictService: PredictService) { }
     @Post('fish')
-    async handleUpload(@Req() req: FileUploadRequest) {
+    async handleUpload(@Req() req: FileUploadRequest, @Headers('authorization') authorization: string) {
         const image = req.files?.image;
 
         if (!image) {
@@ -26,7 +26,7 @@ export class PredictController {
 
         try {
             const payload = image;
-            const label = this.predictService.predictClassification(model, payload);
+            const label = this.predictService.predictClassification(model, payload, authorization);
             // const createdHistory = await this.historiesQuery.createHistory(label.jenis_ikan);
 
             return { jenis_ikan: (await label).jenis_ikan, pakan: (await label).pakan, pemeliharaan: (await label).pemeliharaan };

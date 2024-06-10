@@ -36,6 +36,7 @@ model Fish {
 
 model Histories {
   id           Int      @id @default(autoincrement())
+  idUser       String?
   image        String
   timestamp    DateTime
 }

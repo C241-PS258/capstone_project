@@ -3,13 +3,14 @@ import * as tfjs from '@tensorflow/tfjs-node';
 import { FishQuery } from 'prisma/queries/fish/fish.query';
 import { Storage } from '@google-cloud/storage';
 import { v4 as uuidv4 } from 'uuid';
+import { AuthRepository } from '../auth/auth.repository';
 
 @Injectable()
 export class PredictService {
     private storage: Storage;
     private bucketName: string;
     private folderName: string;
-    constructor(private readonly fishQuery: FishQuery) {
+    constructor(private readonly fishQuery: FishQuery, private readonly authRepository: AuthRepository) {
         this.storage = new Storage({
             keyFilename: 'secret_key.json',
             projectId: 'aquaqulture-mate',
@@ -43,8 +44,10 @@ export class PredictService {
         });
     }
 
-    async predictClassification(model, image) {
+    async predictClassification(model, image, token) {
         try {
+            const object = { id: "guest" };
+            const { id } = object;
             const tensor = tfjs.node.decodeJpeg(image.data)
                 .resizeNearestNeighbor([224, 224])
                 .expandDims()
@@ -54,23 +57,27 @@ export class PredictService {
             const prediction = model.predict(tensor);
             const scores = await prediction.data();
             const maxScoreIndex = scores.indexOf(Math.max(...scores));
-            let jenis_ikan, pakan, pemeliharaan;
+
+            const decodedToken = token ? await this.authRepository.decodeJwtToken(token) : { id: "guest" };
+            console.log("id: ", decodedToken.id);
+
+            let jenis_ikan = "Tidak Diketahui", pakan = "Tidak Diketahui", pemeliharaan = "Tidak Diketahui";
+
             const ikanLabels = ["Gabus", "Mas", "Lele", "Nila", "Patin"];
             const imageUrl = await this.uploadFile(image);
             console.log("image url: ", imageUrl);
 
             if (maxScoreIndex >= 0 && maxScoreIndex < ikanLabels.length) {
                 jenis_ikan = ikanLabels[maxScoreIndex];
-                const ikanInfo = await this.fishQuery.getFishByName(jenis_ikan, imageUrl);
+                const ikanInfo = await this.fishQuery.getFishByName(jenis_ikan, imageUrl, decodedToken.id);
                 pakan = ikanInfo.pakan;
                 pemeliharaan = ikanInfo.pemeliharaan;
-            } else {
-                ({ jenis_ikan, pakan, pemeliharaan } = { jenis_ikan: "Tidak Diketahui", pakan: "Tidak Diketahui", pemeliharaan: "Tidak Diketahui" });
             }
 
             return { jenis_ikan, pakan, pemeliharaan };
         } catch (error) {
             throw new BadRequestException(`Terjadi kesalahan input: ${error.message}`);
         }
+
     }
 }
