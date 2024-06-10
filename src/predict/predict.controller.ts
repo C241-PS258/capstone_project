@@ -1,8 +1,9 @@
-import { BadRequestException, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Controller, Headers, Post, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { PredictService } from './predict.service';
 import { loadModel } from 'src/model/load.models';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { HistoriesQuery } from 'prisma/queries/histories/histories.query';
 
 interface FileUploadRequest extends Request {
     files: {
@@ -14,7 +15,7 @@ interface FileUploadRequest extends Request {
 export class PredictController {
     constructor(private predictService: PredictService) { }
     @Post('fish')
-    async handleUpload(@Req() req: FileUploadRequest) {
+    async handleUpload(@Req() req: FileUploadRequest, @Headers('authorization') authorization: string) {
         const image = req.files?.image;
 
         if (!image) {
@@ -24,12 +25,11 @@ export class PredictController {
         const model = await loadModel();
 
         try {
-            const imageUrl = await this.predictService.uploadFile(image);
-            console.log("image url: ", imageUrl);
-
             const payload = image;
-            const label = this.predictService.predictClassification(model, payload);
-            return { jenis_ikan: (await label).jenis_ikan, pakan: (await label).pakan, pemeliharaan: (await label).pemeliharaan};
+            const label = this.predictService.predictClassification(model, payload, authorization);
+            // const createdHistory = await this.historiesQuery.createHistory(label.jenis_ikan);
+
+            return { jenis_ikan: (await label).jenis_ikan, pakan: (await label).pakan, pemeliharaan: (await label).pemeliharaan };
         } catch (error) {
             throw new BadRequestException(`Error in processing the image: ${error.message}`);
         }

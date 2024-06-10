@@ -3,9 +3,8 @@ import { DbService } from "prisma/db.service";
 
 
 @Injectable()
-export class FishQuery extends DbService {
-    // async getFishByName(fishName: string, imageUrl: string) {
-    async getFishByName(fishName: string, imageUrl: string, idUser:string) {
+export class HistoriesQuery extends DbService {
+    async createHistory(fishName: string) {
         try {
             const fish = await this.prisma.fish.findUnique({
                 where: { nama: fishName },
@@ -13,19 +12,19 @@ export class FishQuery extends DbService {
             if (!fish) {
                 throw new BadRequestException(`Fish ${fishName} not found in the database.`);
             }
-
+            
+            // Membuat entri baru dalam tabel HistoriesFish
             const createdHistory = await this.prisma.histories.create({
                 data: {
-                    image: imageUrl,
-                    idUser: idUser,
-                    timestamp: new Date(),
+                    image: 'imageURL', // Anda perlu menentukan URL gambar
+                    timestamp: new Date(), // Timestamp saat ini
+                    // fish: { connect: { id: fish.id } } // Menghubungkan dengan entri ikan yang ditemukan
                 }
             });
-
-            return fish;
+            
+            return createdHistory;
         } catch (error) {
-            throw new BadRequestException(`Error fetching data for ${fishName}: ${error.message}`);
+            throw new BadRequestException(`Error creating history for ${fishName}: ${error.message}`);
         }
     }
-
 }

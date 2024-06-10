@@ -20,6 +20,11 @@ export class AuthRepository {
         return user;
     }
 
+    async decodeJwtToken(accessToken: string) {
+        const decodedJwt = this.jwtService.decode(accessToken.split(' ')[1],);
+        return decodedJwt;
+    }
+
 
     /*
       |--------------------------------------------------------------------------

@@ -23,8 +23,6 @@ export class AuthController {
         return user;
     }
 
-
-
     @Get('status')
     @UseGuards(JwtAuthGuard)
     status(@Req() req: Request) {
