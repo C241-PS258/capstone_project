@@ -29,10 +29,11 @@ model Fish {
 }
 
 model Histories {
-  id        Int      @id @default(autoincrement())
-  idUser    String?
-  image     String
-  timestamp DateTime
-  fish      Fish     @relation(fields: [nameFish], references: [nama])
-  nameFish  String
+  id                 Int      @id @default(autoincrement())
+  idUser             String?
+  image              String
+  timestamp          DateTime
+  harvestPredictions String   @default("")
+  fish               Fish     @relation(fields: [nameFish], references: [nama])
+  nameFish           String
 }

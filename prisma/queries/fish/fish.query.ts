@@ -13,12 +13,18 @@ export class FishQuery extends DbService {
                 throw new BadRequestException(`Fish ${fishName} not found in the database.`);
             }
 
+            const dateNow = new Date();
+            const predictHarvest = new Date(dateNow.setMonth(dateNow.getMonth() + 6));
+            const predictHarvestFormatted = `${predictHarvest.getDate()}-${(predictHarvest.getMonth() + 1).toString().padStart(2, '0')}-${predictHarvest.getFullYear()}`;
+
+
             const createdHistory = await this.prisma.histories.create({
                 data: {
                     image: imageUrl,
                     idUser: idUser,
                     nameFish: fishName,
-                    timestamp: new Date(),
+                    harvestPredictions: predictHarvestFormatted,
+                    timestamp: dateNow,
                 }
             });
 
