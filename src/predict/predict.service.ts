@@ -73,7 +73,7 @@ export class PredictService {
 
             return { jenis_ikan, pakan, pemeliharaan };
         } catch (error) {
-            throw new BadRequestException(`Terjadi kesalahan input gambar, ulangi input gambar`);
+            throw new BadRequestException(`Terjadi kesalahan input gambar: ${error.message}`);
         }
     }
 }
