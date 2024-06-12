@@ -9,34 +9,30 @@ datasource db {
 
 // /*
 // |--------------------------------------------------------------------------
-// | Enum Value
-// |--------------------------------------------------------------------------
-// */
-
-
-// /*
-// |--------------------------------------------------------------------------
 // | Model
 // |--------------------------------------------------------------------------
 // */
 
 model User {
-  id       String     @id @default(uuid())
-  name     String     
-  email    String?    @unique
+  id       String  @id @default(uuid())
+  name     String
+  email    String? @unique
   password String
 }
 
 model Fish {
-    id           Int      @id @default(autoincrement())
-    nama         String   @unique
-    pakan        String
-    pemeliharaan String
+  id           Int         @id @default(autoincrement())
+  nama         String      @unique
+  pakan        String
+  pemeliharaan String
+  histories    Histories[]
 }
 
 model Histories {
-  id           Int      @id @default(autoincrement())
-  idUser       String?
-  image        String
-  timestamp    DateTime
+  id        Int      @id @default(autoincrement())
+  idUser    String?
+  image     String
+  timestamp DateTime
+  fish      Fish     @relation(fields: [nameFish], references: [nama])
+  nameFish  String
 }
