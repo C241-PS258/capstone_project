@@ -27,7 +27,6 @@ export class PredictController {
         try {
             const payload = image;
             const label = this.predictService.predictClassification(model, payload, authorization);
-            // const createdHistory = await this.historiesQuery.createHistory(label.jenis_ikan);
 
             return { jenis_ikan: (await label).jenis_ikan, pakan: (await label).pakan, pemeliharaan: (await label).pemeliharaan };
         } catch (error) {

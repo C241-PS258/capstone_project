@@ -46,8 +46,6 @@ export class PredictService {
 
     async predictClassification(model, image, token) {
         try {
-            const object = { id: "guest" };
-            const { id } = object;
             const tensor = tfjs.node.decodeJpeg(image.data)
                 .resizeNearestNeighbor([224, 224])
                 .expandDims()
@@ -59,7 +57,6 @@ export class PredictService {
             const maxScoreIndex = scores.indexOf(Math.max(...scores));
 
             const decodedToken = token ? await this.authRepository.decodeJwtToken(token) : { id: "guest" };
-            console.log("id: ", decodedToken.id);
 
             let jenis_ikan = "Tidak Diketahui", pakan = "Tidak Diketahui", pemeliharaan = "Tidak Diketahui";
 
@@ -78,6 +75,5 @@ export class PredictService {
         } catch (error) {
             throw new BadRequestException(`Terjadi kesalahan input: ${error.message}`);
         }
-
     }
 }
