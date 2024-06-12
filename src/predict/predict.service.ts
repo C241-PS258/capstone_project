@@ -38,7 +38,7 @@ export class PredictService {
                     resolve(publicUrl);
                 })
                 .on('error', (err) => {
-                    reject(`Unable to upload image, something went wrong: ${err.message}`);
+                    reject(`Gagal upload gambar, ulangi upload gambar`);
                 })
                 .end(file.data);
         });
@@ -73,7 +73,7 @@ export class PredictService {
 
             return { jenis_ikan, pakan, pemeliharaan };
         } catch (error) {
-            throw new BadRequestException(`Terjadi kesalahan input: ${error.message}`);
+            throw new BadRequestException(`Terjadi kesalahan input gambar, ulangi input gambar`);
         }
     }
 }

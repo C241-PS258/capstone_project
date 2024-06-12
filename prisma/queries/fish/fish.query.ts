@@ -4,8 +4,7 @@ import { DbService } from "prisma/db.service";
 
 @Injectable()
 export class FishQuery extends DbService {
-    // async getFishByName(fishName: string, imageUrl: string) {
-    async getFishByName(fishName: string, imageUrl: string, idUser:string) {
+    async getFishByName(fishName: string, imageUrl: string, idUser: string) {
         try {
             const fish = await this.prisma.fish.findUnique({
                 where: { nama: fishName },
@@ -18,13 +17,14 @@ export class FishQuery extends DbService {
                 data: {
                     image: imageUrl,
                     idUser: idUser,
+                    nameFish: fishName,
                     timestamp: new Date(),
                 }
             });
 
             return fish;
         } catch (error) {
-            throw new BadRequestException(`Error fetching data for ${fishName}: ${error.message}`);
+            throw new BadRequestException(`Gagal mengambil data ikan ${fishName}`);
         }
     }
 

@@ -10,33 +10,35 @@ export class HistoriesQuery extends DbService {
                 where: { nama: fishName },
             });
             if (!fish) {
-                throw new BadRequestException(`Fish ${fishName} not found in the database.`);
+                throw new BadRequestException(`Gagal mengambil data ikan ${fishName} .`);
             }
 
-            // Membuat entri baru dalam tabel HistoriesFish
             const createdHistory = await this.prisma.histories.create({
                 data: {
-                    image: 'imageURL', // Anda perlu menentukan URL gambar
-                    timestamp: new Date(), // Timestamp saat ini
-                    // fish: { connect: { id: fish.id } } // Menghubungkan dengan entri ikan yang ditemukan
+                    image: 'imageURL',
+                    nameFish: fishName,
+                    timestamp: new Date(),
                 }
             });
 
             return createdHistory;
         } catch (error) {
-            throw new BadRequestException(`Error creating history for ${fishName}: ${error.message}`);
+            throw new BadRequestException(`Gagal membuat data, ulangi input gambar`);
         }
     }
 
     async getByIdUser(idUser: string) {
         try {
+            if (idUser === '-') {
+                return { message: "guest access" };
+            }
             const histories = await this.prisma.histories.findMany({
                 where: { idUser },
                 orderBy: { timestamp: 'desc' },
             });
             return histories;
         } catch (error) {
-            throw new BadRequestException(`Error retrieving histories for user ${idUser}: ${error.message}`);
+            throw new BadRequestException(`Gagal mengambil data user`);
         }
     }
 }
