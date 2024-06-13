@@ -24,6 +24,8 @@ export class PredictController {
 
         try {
             const payload = image;
+            console.log("payload", payload);
+            
             const label = this.predictService.predictClassification(model, payload, authorization);
 
             return { jenis_ikan: (await label).jenis_ikan, pakan: (await label).pakan, pemeliharaan: (await label).pemeliharaan };
