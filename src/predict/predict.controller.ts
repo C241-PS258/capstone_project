@@ -28,7 +28,7 @@ export class PredictController {
 
             return { jenis_ikan: (await label).jenis_ikan, pakan: (await label).pakan, pemeliharaan: (await label).pemeliharaan };
         } catch (error) {
-            throw new BadRequestException(`Gagal saat prediksi ikan, ulangi input gambar`);
+            throw new BadRequestException(`Error: ${error.message}`);
         }
     }
 }
