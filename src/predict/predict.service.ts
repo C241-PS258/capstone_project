@@ -13,6 +13,7 @@ export class PredictService {
     constructor(private readonly fishQuery: FishQuery, private readonly authRepository: AuthRepository) {
         this.storage = new Storage({
             projectId: 'aquaqulture-mate',
+            
         });
         this.bucketName = 'aquaculture_mate-bucket';
         this.folderName = 'history-image';
@@ -62,8 +63,6 @@ export class PredictService {
 
 
             const decodedToken = token ? await this.authRepository.decodeJwtToken(token) : { id: "guest" };
-
-            let jenis_ikan = "Tidak Diketahui", pakan = "Tidak Diketahui", pemeliharaan = "Tidak Diketahui";
 
             const ikanLabels = ["Gabus", "Mas", "Lele", "Nila", "Patin"];
             const imageUrl = await this.uploadFile(image);
