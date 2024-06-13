@@ -35,6 +35,14 @@ export class HistoriesQuery extends DbService {
             const histories = await this.prisma.histories.findMany({
                 where: { idUser },
                 orderBy: { timestamp: 'desc' },
+                include: {
+                    fish: {
+                        select: {
+                            pakan: true,
+                            pemeliharaan: true
+                        }
+                    }
+                }
             });
             return histories;
         } catch (error) {
