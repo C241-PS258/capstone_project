@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Headers, Post, Req} from '@nestjs/common';
+import { BadRequestException, Controller, Headers, Post, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { PredictService } from './predict.service';
 import { loadModel } from 'src/model/load.models';
@@ -20,12 +20,14 @@ export class PredictController {
             throw new BadRequestException('Gambar belum diinput');
         }
 
+        if (image.mimetype !== 'image/jpeg' && image.mimetype !== 'image/png') {
+            throw new BadRequestException('Input harus gambar');
+        }
+
         const model = await loadModel();
 
         try {
             const payload = image;
-            console.log("payload", payload);
-            
             const label = this.predictService.predictClassification(model, payload, authorization);
 
             return { jenis_ikan: (await label).jenis_ikan, pakan: (await label).pakan, pemeliharaan: (await label).pemeliharaan };
@@ -33,4 +35,5 @@ export class PredictController {
             throw new BadRequestException(`Error: ${error.message}`);
         }
     }
+
 }
